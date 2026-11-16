@@ -7,3 +7,6 @@ Sistema de Controle e Gestão de Insumos e Periféricos de TI.
 3. Execute o servidor: `uvicorn main:app --reload`
 4. A API estará rodando em `http://localhost:8000`.
 5. Para acessar o Frontend, basta dar um duplo clique no arquivo `frontend/index.html` no seu navegador.
+
+
+Projeto validado com layout responsivo mobile-first.
