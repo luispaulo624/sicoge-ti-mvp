@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Saída - SICOGE-TI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/app/css/style.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-sm mx-auto" style="max-width: 500px;">
+            <div class="card-body">
+                <h4 class="mb-3">Registrar Saída de Estoque</h4>
+                <form id="form-movimentacao">
+                    <div class="mb-3">
+                        <label class="form-label">ID do Item (Veja na tabela do Dashboard)</label>
+                        <input type="number" id="item_id" class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quantidade</label>
+                        <input type="number" id="quantidade" class="form-control" required min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Setor de Destino</label>
+                        <select id="setor" class="form-select" required>
+                            <option value="">Selecione...</option>
+                            <option value="Escola Municipal A">Escola Municipal A</option>
+                            <option value="Secretaria Municipal">Secretaria Municipal</option>
+                            <option value="Administração">Administração</option>
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="/app/dashboard.html" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Confirmar Saída</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="/app/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Ignorar ambientes virtuais e dependências locais
+venv/
+env/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Ignorar banco de dados local para não sujar o repositório
+sicoge.db
+
+# Ignorar variáveis de ambiente
+.env
