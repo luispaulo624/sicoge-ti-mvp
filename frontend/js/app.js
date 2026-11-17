@@ -1,8 +1,68 @@
 const API_URL = "/api";
+let itensEstoqueCache = [];
 
 // ==========================================
-// 1. LISTAR ESTOQUE (DESKTOP + MOBILE CARDS)
+// 1. RENDERIZAR E LISTAR ESTOQUE (DESKTOP + MOBILE)
 // ==========================================
+function renderizarEstoque(itens, mensagemVazio = 'Nenhum item cadastrado ainda.') {
+    const tabela = document.getElementById('tabela-estoque');
+    const cardsMobile = document.getElementById('cards-estoque-mobile');
+
+    if (tabela) tabela.innerHTML = '';
+    if (cardsMobile) cardsMobile.innerHTML = '';
+
+    if (itens.length === 0) {
+        if (tabela) tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">${mensagemVazio}</td></tr>`;
+        if (cardsMobile) cardsMobile.innerHTML = `<div class="card p-3 text-center text-muted">${mensagemVazio}</div>`;
+        return;
+    }
+
+    itens.forEach(item => {
+        const isEstoqueBaixo = item.quantidade_atual <= item.estoque_minimo;
+        const badgeHTML = isEstoqueBaixo 
+            ? '<span class="badge bg-danger">Estoque Baixo</span>' 
+            : '<span class="badge bg-success">Regular</span>';
+        const qtdClass = isEstoqueBaixo ? 'fw-bold text-danger' : 'fw-bold text-dark';
+
+        // 1. Preenche a linha da tabela (Desktop)
+        if (tabela) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.id}</td>
+                <td>${item.codigo_patrimonio}</td>
+                <td>${item.nome}</td>
+                <td class="${qtdClass}">${item.quantidade_atual}</td>
+                <td>${item.estoque_minimo}</td>
+                <td>${badgeHTML}</td>
+            `;
+            tabela.appendChild(tr);
+        }
+
+        // 2. Preenche o Card (Celular)
+        if (cardsMobile) {
+            const card = document.createElement('div');
+            card.className = `card shadow-sm border-start border-4 ${isEstoqueBaixo ? 'border-danger' : 'border-success'}`;
+            card.innerHTML = `
+                <div class="card-body py-2 px-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <div>
+                            <span class="badge bg-secondary me-1">ID: ${item.id}</span>
+                            <small class="text-muted fw-semibold">${item.codigo_patrimonio}</small>
+                        </div>
+                        ${badgeHTML}
+                    </div>
+                    <h6 class="card-title mb-2 fw-bold">${item.nome}</h6>
+                    <div class="d-flex justify-content-between align-items-center bg-light rounded px-2 py-1">
+                        <span class="small text-muted">Qtd. Atual: <strong class="fs-6 ${qtdClass}">${item.quantidade_atual}</strong></span>
+                        <span class="small text-muted">Mínimo: <strong>${item.estoque_minimo}</strong></span>
+                    </div>
+                </div>
+            `;
+            cardsMobile.appendChild(card);
+        }
+    });
+}
+
 async function carregarEstoque() {
     const tabela = document.getElementById('tabela-estoque');
     const cardsMobile = document.getElementById('cards-estoque-mobile');
@@ -13,67 +73,26 @@ async function carregarEstoque() {
         const response = await fetch(`${API_URL}/estoque`);
         if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
 
-        const itens = await response.json();
-        
-        if (tabela) tabela.innerHTML = '';
-        if (cardsMobile) cardsMobile.innerHTML = '';
-
-        if (itens.length === 0) {
-            const msgVazio = 'Nenhum item cadastrado ainda.';
-            if (tabela) tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">${msgVazio}</td></tr>`;
-            if (cardsMobile) cardsMobile.innerHTML = `<div class="card p-3 text-center text-muted">${msgVazio}</div>`;
-            return;
-        }
-
-        itens.forEach(item => {
-            const isEstoqueBaixo = item.quantidade_atual <= item.estoque_minimo;
-            const badgeHTML = isEstoqueBaixo 
-                ? '<span class="badge bg-danger">Estoque Baixo</span>' 
-                : '<span class="badge bg-success">Regular</span>';
-            const qtdClass = isEstoqueBaixo ? 'fw-bold text-danger' : 'fw-bold text-dark';
-
-            // 1. Preenche a linha da tabela (Desktop)
-            if (tabela) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${item.id}</td>
-                    <td>${item.codigo_patrimonio}</td>
-                    <td>${item.nome}</td>
-                    <td class="${qtdClass}">${item.quantidade_atual}</td>
-                    <td>${item.estoque_minimo}</td>
-                    <td>${badgeHTML}</td>
-                `;
-                tabela.appendChild(tr);
-            }
-
-            // 2. Preenche o Card (Celular)
-            if (cardsMobile) {
-                const card = document.createElement('div');
-                card.className = `card shadow-sm border-start border-4 ${isEstoqueBaixo ? 'border-danger' : 'border-success'}`;
-                card.innerHTML = `
-                    <div class="card-body py-2 px-3">
-                        <div class="d-flex justify-content-between align-items-start mb-1">
-                            <div>
-                                <span class="badge bg-secondary me-1">ID: ${item.id}</span>
-                                <small class="text-muted fw-semibold">${item.codigo_patrimonio}</small>
-                            </div>
-                            ${badgeHTML}
-                        </div>
-                        <h6 class="card-title mb-2 fw-bold">${item.nome}</h6>
-                        <div class="d-flex justify-content-between align-items-center bg-light rounded px-2 py-1">
-                            <span class="small text-muted">Qtd. Atual: <strong class="fs-6 ${qtdClass}">${item.quantidade_atual}</strong></span>
-                            <span class="small text-muted">Mínimo: <strong>${item.estoque_minimo}</strong></span>
-                        </div>
-                    </div>
-                `;
-                cardsMobile.appendChild(card);
-            }
-        });
+        itensEstoqueCache = await response.json();
+        renderizarEstoque(itensEstoqueCache);
     } catch (error) {
         const msgErro = `Erro ao carregar dados: ${error.message}`;
         if (tabela) tabela.innerHTML = `<tr><td colspan="6" class="text-center text-danger">${msgErro}</td></tr>`;
         if (cardsMobile) cardsMobile.innerHTML = `<div class="alert alert-danger">${msgErro}</div>`;
     }
+}
+
+// Filtro instantâneo da barra de busca no Dashboard
+const campoBusca = document.getElementById('busca-estoque');
+if (campoBusca) {
+    campoBusca.addEventListener('input', (e) => {
+        const termo = e.target.value.trim().toLowerCase();
+        const filtrados = itensEstoqueCache.filter(item =>
+            item.nome.toLowerCase().includes(termo) ||
+            item.codigo_patrimonio.toLowerCase().includes(termo)
+        );
+        renderizarEstoque(filtrados, 'Nenhum insumo encontrado para a busca.');
+    });
 }
 
 // ==========================================
@@ -116,6 +135,32 @@ if (formCadastro) {
 // ==========================================
 // 3. REGISTRAR SAÍDA DE ESTOQUE
 // ==========================================
+async function carregarOpcoesItensSaida() {
+    const selectItem = document.getElementById('item_id');
+    if (!selectItem || selectItem.tagName !== 'SELECT') return;
+
+    try {
+        const response = await fetch(`${API_URL}/estoque`);
+        if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+
+        const itens = await response.json();
+        selectItem.innerHTML = '<option value="">Selecione o insumo...</option>';
+
+        itens.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = `${item.codigo_patrimonio} — ${item.nome} (Saldo: ${item.quantidade_atual})`;
+            if (item.quantidade_atual <= 0) {
+                option.disabled = true;
+                option.textContent += ' [Sem estoque]';
+            }
+            selectItem.appendChild(option);
+        });
+    } catch (error) {
+        selectItem.innerHTML = '<option value="">Erro ao carregar insumos</option>';
+    }
+}
+
 const formMov = document.getElementById('form-movimentacao');
 
 if (formMov) {
@@ -149,4 +194,7 @@ if (formMov) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', carregarEstoque);
+document.addEventListener('DOMContentLoaded', () => {
+    carregarEstoque();
+    carregarOpcoesItensSaida();
+});
