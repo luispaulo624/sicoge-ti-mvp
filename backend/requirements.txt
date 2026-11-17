@@ -1,8 +1,20 @@
-fastapi>=0.115.0
-uvicorn>=0.32.0
-sqlalchemy>=2.0.36
-pydantic>=2.9.0
-pytest>=8.3.0
-httpx>=0.27.0
+# ==============================================================================
+# SICOGE-TI (MVP) - Dependências do Back-end
+# ==============================================================================
+
+# Framework Web e Servidor ASGI
+fastapi>=0.115.0,<1.0.0
+uvicorn[standard]>=0.32.0,<1.0.0
+
+# Persistência Relacional e Validação de Dados (RNF02)
+sqlalchemy>=2.0.36,<3.0.0
+pydantic>=2.9.0,<3.0.0
+
+# Segurança e Autenticação Institucional (RF01 / RNF01)
 passlib[bcrypt]>=1.7.4
-pyjwt>=2.9.0
+bcrypt>=4.0.1,<4.3.0
+pyjwt>=2.9.0,<3.0.0
+
+# Testes Automatizados e Cliente HTTP
+pytest>=8.3.0,<9.0.0
+httpx>=0.27.0,<1.0.0
