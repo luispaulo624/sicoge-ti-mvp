@@ -14,20 +14,25 @@
                 <h4 class="mb-3">Registrar Saída de Estoque</h4>
                 <form id="form-movimentacao">
                     <div class="mb-3">
-                        <label class="form-label">ID do Item (Veja na tabela do Dashboard)</label>
-                        <input type="number" id="item_id" class="form-control" required autofocus>
+                        <label for="item_id" class="form-label">Insumo / Periférico</label>
+                        <select id="item_id" class="form-select" required autofocus>
+                            <option value="">Carregando itens disponíveis...</option>
+                        </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Quantidade</label>
+                        <label for="quantidade" class="form-label">Quantidade</label>
                         <input type="number" id="quantidade" class="form-control" required min="1">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Setor de Destino</label>
+                        <label for="setor" class="form-label">Setor de Destino</label>
                         <select id="setor" class="form-select" required>
-                            <option value="">Selecione...</option>
-                            <option value="Escola Municipal A">Escola Municipal A</option>
-                            <option value="Secretaria Municipal">Secretaria Municipal</option>
-                            <option value="Administração">Administração</option>
+                            <option value="">Selecione o setor...</option>
+                            <option value="Secretaria de Educação">Secretaria de Educação</option>
+                            <option value="Secretaria de Saúde">Secretaria de Saúde</option>
+                            <option value="Administração / Prefeitura">Administração / Prefeitura</option>
+                            <option value="Assistência Social / CRAS">Assistência Social / CRAS</option>
+                            <option value="Escolas Municipais">Escolas Municipais</option>
+                            <option value="Finanças e Tributação">Finanças e Tributação</option>
                         </select>
                     </div>
                     <div class="d-flex justify-content-between">
@@ -38,6 +43,6 @@
             </div>
         </div>
     </div>
-    <script src="/app/js/app.js"></script>
+    <script src="/app/js/app.js?v=3"></script>
 </body>
 </html>
